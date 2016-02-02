@@ -1,6 +1,21 @@
 <html>
     <head>
-        <title></title>
+        <meta http-equiv="refresh" content="5">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Air Quality Dashboard</title>
+        <link rel="stylesheet" href="static/css/dashboard.css" type="text/css">
     </head>
-    <body></body>
+    <body>
+        <div id="dashboard">
+            {% for key, datum in data.iteritems() %}
+            <div class="sensor">
+                <span class="value">{{ labels[key] }}: <b id="{{ key }}-value">{{ datum.value }}</b></span>
+                <span class="time">{{ datum.time.ctime() }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <script type="text/javascript" src="static/js/jquery-1.12.0.min.js"></script>
+        <script type="text/javascript" src="static/js/prettydate.min.js"></script>
+        <script type="text/javascript" src="static/js/dashboard.js"></script>
+    </body>
 </html>
