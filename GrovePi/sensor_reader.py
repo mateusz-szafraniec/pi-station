@@ -5,10 +5,14 @@ import grovepi
 import atexit
 from fractions import gcd
 import sys
+import grove_rgb_lcd
+
 
 class SensorLooper(object):
 
     reader_intervals = []
+    reader_sleeps = []
+    reader_loops = []
     looper_interval = 0
     readers = []
     observers = []
@@ -24,17 +28,29 @@ class SensorLooper(object):
         self.observers += [observer]
 
     def run(self):
+        for reader_interval in self.reader_intervals:
+            self.reader_sleeps += [reader_interval/self.looper_interval]
+            self.reader_loops += [0]
+        print self.reader_sleeps
         while True:
-            #TODO: support different intervals
             data = {}
             now = datetime.datetime.now()
-            for reader in self.readers:
-                val = reader.read()
-                if val:
-                    val['time'] = now
-                    data[reader.key] = val
+            for i, reader in enumerate(self.readers):
+                self.reader_loops[i] += 1
+                if self.reader_loops[i] == self.reader_sleeps[i]:
+                    self.reader_loops[i] = 0
+                    try:
+                        val = reader.read()
+                        if val:
+                            val['time'] = now
+                            data[reader.key] = val
+                    except:
+                        print sys.exc_info()[0]
             for observer in self.observers:
-                observer.notify(data)
+                try:
+                    observer.notify(data)
+                except:
+                    print sys.exc_info()[0]
             time.sleep(self.looper_interval)
     
     def start(self):
@@ -51,6 +67,7 @@ class SensorReader(object):
     
     def read(self):
         return {}
+
 
 class GroveSensorReader(SensorReader):
 
@@ -78,6 +95,7 @@ class GroveAnalogReader(GroveSensorReader):
                 'value': float(grovepi.analogRead(self.pin)) * self.factor
             }
 
+
 class GroveDustReader(SensorReader):
 
     def __init__(self, key):
@@ -86,15 +104,12 @@ class GroveDustReader(SensorReader):
         grovepi.dust_sensor_en()
 
     def read(self):
-        try:
-            [new_val, lpo] = grovepi.dustSensorRead()
-            if new_val:
-                return {
-                        'value': lpo
-                    }
-            else:
-                return None
-        except:
+        [new_val, lpo] = grovepi.dustSensorRead()
+        if new_val:
+            return {
+                    'value': lpo
+                }
+        else:
             return None
 
 class SensorObserver(object):
@@ -115,3 +130,16 @@ class MemorySensorObserver(SensorObserver):
     
     def notify(self, data):
         self.latest.update(data)
+
+
+class GroveLcdObserver(MemorySensorObserver):
+    
+    def notify(self, data):
+        super(GroveLcdObserver, self).notify(data)
+        txt = []
+        for key, val in self.latest.iteritems():
+            txt += ['{k}:{v}'.format(k=key.upper(),v=int(val['value']))]
+        txt = sorted(txt, key=lambda x: len(x))
+        grove_rgb_lcd.setText(txt[-1] + ' ' + txt[0] + '\n' + ' '.join(txt[1:-1]))
+        grove_rgb_lcd.setRGB(0, 255, 0)
+

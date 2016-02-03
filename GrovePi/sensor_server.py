@@ -14,13 +14,14 @@ loop.addReader(GroveAnalogReader("aq", 0))
 loop.addReader(GroveAnalogReader("gas", 1))
 loop.addReader(GroveAnalogReader("hcho", 2))
 loop.addObserver(ConsoleSensorObserver())
-mem_sensors = MemorySensorObserver()
+# mem_sensors = MemorySensorObserver()
+mem_sensors = GroveLcdObserver()
 loop.addObserver(mem_sensors)
 loop.start()
 
 
 app = Flask(__name__)
-app.debug = True
+# app.debug = True
 
 @app.route("/")
 def dashboard():
