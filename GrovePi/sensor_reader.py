@@ -6,7 +6,7 @@ import atexit
 from fractions import gcd
 import sys
 import grove_rgb_lcd
-
+import serial
 
 class SensorLooper(object):
 
@@ -31,7 +31,6 @@ class SensorLooper(object):
         for reader_interval in self.reader_intervals:
             self.reader_sleeps += [reader_interval/self.looper_interval]
             self.reader_loops += [0]
-        print self.reader_sleeps
         while True:
             data = {}
             now = datetime.datetime.now()
@@ -42,8 +41,15 @@ class SensorLooper(object):
                     try:
                         val = reader.read()
                         if val:
-                            val['time'] = now
-                            data[reader.key] = val
+                            if 'value' in val:
+                                # single value
+                                val['time'] = now
+                                data[reader.key] = val
+                            elif len(val) > 0:
+                                # multiple values found
+                                for k,v in val.iteritems():
+                                    v['time'] = now
+                                    data[k] = v
                     except:
                         print sys.exc_info()[0]
             for observer in self.observers:
@@ -68,6 +74,26 @@ class SensorReader(object):
     def read(self):
         return {}
 
+
+class PlantowerPmReader(SensorReader):
+
+    port = None
+    raw_data = None
+
+    def __init__(self, key):
+        super(PlantowerPmReader, self).__init__(key)
+        self.port = serial.Serial("/dev/ttyAMA0", baudrate = 9600, timeout = 2)
+        
+    def parse_field(self, pos):
+          return 0x100 * ord(self.raw_data[pos]) + ord(self.raw_data[pos + 1])
+
+    def read(self):
+        self.raw_data = self.port.read(24)
+        return {
+                'pm1.0': {'value': self.parse_field(10)},
+                'pm2.5': {'value': self.parse_field(12)},
+                'pm10': {'value': self.parse_field(14)},
+            }
 
 class GroveSensorReader(SensorReader):
 
@@ -112,6 +138,23 @@ class GroveDustReader(SensorReader):
         else:
             return None
 
+
+class GroveDhtReader(SensorReader):
+    
+    mode_type = 1
+    
+    def __init__(self, key, pin, mod_type=1):
+        super(GroveDhtReader, self).__init__(key, pin)
+        self.mod_type=mod_type
+
+    def read(self):
+        [temperature,humidity] = grovepi.dht(self.pin, self.mod_type)
+        return {
+                'temp': {'value': temperature},
+                'humi': {'value': humidity},
+            }
+
+
 class SensorObserver(object):
 
     def notify(self, data):
@@ -143,3 +186,8 @@ class GroveLcdObserver(MemorySensorObserver):
         grove_rgb_lcd.setText(txt[-1] + ' ' + txt[0] + '\n' + ' '.join(txt[1:-1]))
         grove_rgb_lcd.setRGB(0, 255, 0)
 
+
+class GroveRgbLedObserver(MemorySensorObserver):
+    
+    def notify(self, data):
+        super(GroveLcdObserver, self).notify(data)

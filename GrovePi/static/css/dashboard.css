@@ -16,8 +16,8 @@ html, body {
 .sensor {
   position: relative;
   background: green;
-  width: 48%;
-  height: 48%;
+  width: 32%;
+  height: 32%;
   font-size: 32px;
   text-align: center;
   color: #FFF;
