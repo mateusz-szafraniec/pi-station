@@ -14,16 +14,16 @@ SENSOR_LABELS = {
     }
 
 loop = SensorLooper()
-loop.addReader(PlantowerPmReader('pm'))
+loop.addReader(GroveDhtReader("dht", 4))
 loop.addReader(GroveDustReader("dust"))
+loop.addReader(PlantowerPmReader('pm'))
 loop.addReader(GroveAnalogReader("aq", 0))
 loop.addReader(GroveAnalogReader("gas", 1))
 loop.addReader(GroveAnalogReader("hcho", 2))
-loop.addReader(GroveDhtReader("dht", 4))
 
 loop.addObserver(ConsoleSensorObserver())
-mem_sensors = MemorySensorObserver()
-# mem_sensors = GroveLcdObserver()
+# mem_sensors = MemorySensorObserver()
+mem_sensors = GroveLcdObserver()
 loop.addObserver(mem_sensors)
 
 loop.start()

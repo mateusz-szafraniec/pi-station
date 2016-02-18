@@ -7,6 +7,7 @@ from fractions import gcd
 import sys
 import grove_rgb_lcd
 import serial
+from collections import OrderedDict
 
 class SensorLooper(object):
 
@@ -17,7 +18,7 @@ class SensorLooper(object):
     readers = []
     observers = []
 
-    def addReader(self, reader, interval=5):
+    def addReader(self, reader, interval=5, group=''):
         self.readers += [reader]
         self.reader_intervals += [interval]
         if 0 == self.looper_interval:
@@ -32,8 +33,7 @@ class SensorLooper(object):
             self.reader_sleeps += [reader_interval/self.looper_interval]
             self.reader_loops += [0]
         while True:
-            data = {}
-            now = datetime.datetime.now()
+            data = OrderedDict()
             for i, reader in enumerate(self.readers):
                 self.reader_loops[i] += 1
                 if self.reader_loops[i] == self.reader_sleeps[i]:
@@ -43,19 +43,19 @@ class SensorLooper(object):
                         if val:
                             if 'value' in val:
                                 # single value
-                                val['time'] = now
                                 data[reader.key] = val
                             elif len(val) > 0:
                                 # multiple values found
                                 for k,v in val.iteritems():
-                                    v['time'] = now
                                     data[k] = v
                     except:
+                        print 'Reader error: '
                         print sys.exc_info()[0]
             for observer in self.observers:
                 try:
                     observer.notify(data)
                 except:
+                    print 'Observer error: '
                     print sys.exc_info()[0]
             time.sleep(self.looper_interval)
     
@@ -169,21 +169,32 @@ class ConsoleSensorObserver(SensorObserver):
 
 class MemorySensorObserver(SensorObserver):
     
-    latest = {}
+    latest = OrderedDict()
     
     def notify(self, data):
+        now = datetime.datetime.now()
+        for k, v in data.iteritems():
+            v['time'] = now
         self.latest.update(data)
 
 
 class GroveLcdObserver(MemorySensorObserver):
     
+    index = 0
+    
     def notify(self, data):
         super(GroveLcdObserver, self).notify(data)
         txt = []
-        for key, val in self.latest.iteritems():
+        items = self.latest.items()[self.index : self.index + 4]
+        print items
+        self.index = 0 if self.index + 4 > len(self.latest) else self.index + 4
+        for key, val in items:
             txt += ['{k}:{v}'.format(k=key.upper(),v=int(val['value']))]
-        txt = sorted(txt, key=lambda x: len(x))
-        grove_rgb_lcd.setText(txt[-1] + ' ' + txt[0] + '\n' + ' '.join(txt[1:-1]))
+        if len(txt) > 1:
+            txt = sorted(txt, key=lambda x: len(x))
+            grove_rgb_lcd.setText(txt[-1] + ' ' + txt[0] + '\n' + ' '.join(txt[1:-1]))
+        else:
+            grove_rgb_lcd.setText(txt[0])
         grove_rgb_lcd.setRGB(0, 255, 0)
 
 

@@ -15,7 +15,7 @@ html, body {
 }
 .sensor {
   position: relative;
-  background: green;
+  background: #666666;
   width: 32%;
   height: 32%;
   font-size: 32px;
@@ -42,4 +42,28 @@ html, body {
 }
 .sensor b {
   font-size: 40px;
+}
+
+.dry, .cold {
+    background-color: lightblue;
+}
+
+.good, .comfortable {
+    background-color: green;
+}
+
+.low {
+    background-color: yellow;
+}
+
+.medium {
+    background-color: orange;
+}
+
+.high, .humid, .hot {
+    background-color: red;
+}
+
+.sever {
+    background-color: purple;
 }
