@@ -8,7 +8,7 @@
     <body>
         <div id="dashboard">
             {% for key, datum in data.iteritems() %}
-            <div class="sensor">
+            <div class="sensor {{datum.level}}">
                 <span class="value">{{ labels[key] }}: <b id="{{ key }}-value">{{ datum.value }}</b></span>
                 <span class="time">{{ datum.time.ctime() }}</span>
             </div>
