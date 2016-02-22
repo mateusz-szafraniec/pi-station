@@ -21,7 +21,7 @@ html, body {
   font-size: 32px;
   text-align: center;
   color: #FFF;
-  text-shadow: 2px 2px 5px #000;
+  text-shadow: 1px 1px 3px #000;
 }
 .sensor > .value {
   display: block;
@@ -33,12 +33,22 @@ html, body {
   bottom: 0;
   right: 0;
 }
+.sensor > .level {
+  position: absolute;
+  bottom: 28px;
+  right: 12px;
+  font-size: 11px;
+  color: #EEE;
+  font-weight: bolder;
+  text-transform: capitalize;
+}
 .sensor > .time {
   position: absolute;
   bottom: 12px;
   right: 12px;
   font-size: 11px;
-  color: #CCC;
+  color: #EEE;
+  font-weight: bold;
 }
 .sensor b {
   font-size: 40px;
