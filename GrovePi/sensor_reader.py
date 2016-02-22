@@ -8,6 +8,7 @@ import sys
 import grove_rgb_lcd
 import serial
 from collections import OrderedDict
+import math
 
 class SensorLooper(object):
 
@@ -175,14 +176,19 @@ class GroveDhtReader(SensorReader):
 
     def read(self):
         [temperature,humidity] = grovepi.dht(self.pin, self.mod_type)
-        return {
-                'temp': {
-                    'value': temperature, 
-                    'level': self.get_level(temperature, self.temp_levels)},
-                'humi': {
-                    'value': humidity, 
-                    'level': self.get_level(humidity, self.humi_levels)},
+        result = {}
+        if not math.isnan(temperature):
+            result['temp'] = {
+                'value': temperature, 
+                'level': self.get_level(temperature, self.temp_levels)
             }
+        if not math.isnan(humidity):
+            result['humi'] = {
+                'value': humidity, 
+                'level': self.get_level(humidity, self.humi_levels)
+            }
+
+        return result
 
 
 class SensorObserver(object):
@@ -238,7 +244,7 @@ class GroveLcdObserver(MemorySensorObserver):
         txt = []
         items = self.latest.items()[self.index : self.index + 4]
         print items
-        self.index = 0 if self.index + 4 > len(self.latest) else self.index + 4
+        self.index = 0 if self.index + 4 >= len(self.latest) else self.index + 4
         for key, val in items:
             txt += ['{k}:{v}'.format(k=key.upper(),v=int(val['value']))]
         if len(txt) > 1:
