@@ -243,7 +243,6 @@ class GroveLcdObserver(MemorySensorObserver):
         super(GroveLcdObserver, self).notify(data)
         txt = []
         items = self.latest.items()[self.index : self.index + 4]
-        print items
         self.index = 0 if self.index + 4 >= len(self.latest) else self.index + 4
         for key, val in items:
             txt += ['{k}:{v}'.format(k=key.upper(),v=int(val['value']))]
