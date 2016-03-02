@@ -9,6 +9,8 @@ import grove_rgb_lcd
 import serial
 from collections import OrderedDict
 import math
+import traceback
+
 
 class SensorLooper(object):
 
@@ -29,35 +31,55 @@ class SensorLooper(object):
     def addObserver(self, observer):
         self.observers += [observer]
 
-    def run(self):
+    def _calculateIntervals(self):
+        self.reader_sleeps = []
+        self.reader_loops = []
         for reader_interval in self.reader_intervals:
             self.reader_sleeps += [reader_interval/self.looper_interval]
             self.reader_loops += [0]
+
+    def _readerSleeps(self, i):
+        self.reader_loops[i] += 1
+        if self.reader_loops[i] == self.reader_sleeps[i]:
+            self.reader_loops[i] = 0
+            return False
+        return True
+
+
+    def _readAllData(self):
+        data = OrderedDict()
+        for i, reader in enumerate(self.readers):
+            if self._readerSleeps(i):
+                continue
+            try:
+                val = reader.read()
+                if val:
+                    if 'value' in val:
+                        # single value
+                        data[reader.key] = val
+                    elif len(val) > 0:
+                        # multiple values found
+                        for k,v in val.iteritems():
+                            data[k] = v
+            except:
+                print 'Reader error: '
+                traceback.print_exc()
+        return data
+
+    def _notifyAll(self, data):
+        for observer in self.observers:
+            try:
+                observer.notify(data)
+            except:
+                print 'Observer error: '
+                traceback.print_exc()
+
+
+    def run(self):
+        self._calculateIntervals()
         while True:
-            data = OrderedDict()
-            for i, reader in enumerate(self.readers):
-                self.reader_loops[i] += 1
-                if self.reader_loops[i] == self.reader_sleeps[i]:
-                    self.reader_loops[i] = 0
-                    try:
-                        val = reader.read()
-                        if val:
-                            if 'value' in val:
-                                # single value
-                                data[reader.key] = val
-                            elif len(val) > 0:
-                                # multiple values found
-                                for k,v in val.iteritems():
-                                    data[k] = v
-                    except:
-                        print 'Reader error: '
-                        print sys.exc_info()
-            for observer in self.observers:
-                try:
-                    observer.notify(data)
-                except:
-                    print 'Observer error: '
-                    print sys.exc_info()
+            data = self._readAllData()
+            self._notifyAll(data)
             time.sleep(self.looper_interval)
     
     def start(self):
@@ -88,8 +110,6 @@ class SensorReader(object):
 
 class PlantowerPmReader(SensorReader):
 
-    port = None
-    raw_data = None
     pm1_levels = OrderedDict([('good', 0), ('low', 10), ('medium', 20), ('high', 30), ('sever', 50)])
     pm25_levels = OrderedDict([('good', 0), ('low', 20), ('medium', 35), ('high', 70), ('sever', 100)])
     pm10_levels = OrderedDict([('good', 0), ('low', 50), ('medium', 150), ('high', 350), ('sever', 420)])
@@ -176,7 +196,7 @@ class GroveDhtReader(SensorReader):
 
     def read(self):
         [temperature,humidity] = grovepi.dht(self.pin, self.mod_type)
-        result = {}
+        result = OrderedDict()
         if not math.isnan(temperature):
             result['temp'] = {
                 'value': temperature, 
@@ -257,7 +277,15 @@ class GroveLcdObserver(MemorySensorObserver):
 
 class GroveChainableRgbLedObserver(MemorySensorObserver):
     
+    def __init__(self, pin):
+        self.pin = pin
+        grovepi.pinMode(self.pin,"OUTPUT")
+        grovepi.chainableRgbLed_init(self.pin, 1)
+        grovepi.storeColor(0, 255, 0)
+        
     def notify(self, data):
-        super(GroveLcdObserver, self).notify(data)
+        super(GroveChainableRgbLedObserver, self).notify(data)
         rgb = self.get_level_color(self.get_highest_level(self.latest))
-        #TODO: control RGB Led
+        grovepi.chainableRgbLed_pattern(self.pin, 0, 0)
+        grovepi.storeColor(*rgb)
+ 
