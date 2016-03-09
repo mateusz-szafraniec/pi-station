@@ -1,3 +1,3 @@
-AQBox
-=====
-Air Quality Kiosk software/firmware for RaspberryPi+GrovePi.
+Sensor Station
+==============
+Sensor Station software/firmware for various devboards.
