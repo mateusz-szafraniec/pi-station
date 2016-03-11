@@ -3,21 +3,6 @@ from sensorweb.rpi.gpio import *
 #from sensorweb.rpi.grovepi import *
 import sensor_dashboard
 
-SENSOR_LABELS = {
-        'pm1.0': "PM1.0",
-        'pm2.5': "PM2.5",
-        'pm10': "PM10",
-        'dust': "Dust",
-        'aq': "Air Quality",
-        'gas': "Gas",
-        'hcho': "HCHO",
-        'temp': "Temperature",
-        'humi': "Humidity",
-        'so2': "SO2",
-        'no2': "NO2",
-        'o3': "O3",
-    }
-
 
 loop = SensorLooper()
 
@@ -51,5 +36,6 @@ loop.addObserver(mem_sensors)
 # Start Looper                           #
 # Use loop.start() if dashboard disabled #
 ##########################################
+#loop.start()
 loop.startInBackground()
 sensor_dashboard.start(mem_sensors)
