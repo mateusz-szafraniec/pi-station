@@ -15,7 +15,7 @@ SensorWeb Station software/firmware for various devboards.
 
 #### 1. Prepare OS
 
-[Install Raspbian on Your SDCard.](https://www.raspberrypi.org/documentation/installation/installing-images/)
+[Install Raspbian on your SDCard.](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
 Insert the SDCard to your RPi when done.
 
@@ -68,7 +68,7 @@ sudo python sensor_daemon.py
 Access the sensor dashboard in RPi's browser with following URL:  
 http://localhost:5000
 
-If you RPi have an IP, you can access it on other devices via IP.  
+If your RPi have an IP, you can access it on other devices via IP.  
 
 ### More Options
 
