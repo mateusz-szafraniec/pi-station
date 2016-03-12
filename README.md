@@ -79,8 +79,9 @@ You may need to [install GrovePi](http://www.dexterindustries.com/GrovePi/get-st
 Currently supported sensors are:
 
 * Plantower PM Sensor
-* Grove Temperature & Humidity Sensor Pro
 * Grove Dust Sensor
+* Grove Temperature & Humidity Sensor Pro
+* Grove Barometer Sensor
 * Other Grove Analog Sensors
 
 Connect your sensor, uncomment and edit corresponding code in ```senser_daemon.py``` to use them.
@@ -100,5 +101,5 @@ Connect your module, uncomment and edit corresponding code in ```senser_daemon.p
 * Post data to SensorWeb server
 * Store data offline and sync when online
 * Offline Charts/Analytics
-* Support GPS modules/dongles
+* Support GPS modules/dongles (but grove GPS use the same serial pins as PM sensor)
 * Support more devboards
