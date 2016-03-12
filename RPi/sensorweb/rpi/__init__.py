@@ -56,7 +56,7 @@ class SensorLooper(object):
                         for k,v in val.iteritems():
                             data[k] = v
             except:
-                print 'Reader error: '
+                print "Reader error: "
                 traceback.print_exc()
         return data
 
@@ -65,7 +65,7 @@ class SensorLooper(object):
             try:
                 observer.notify(data)
             except:
-                print 'Observer error: '
+                print "Observer error: "
                 traceback.print_exc()
 
 
@@ -116,6 +116,8 @@ class SensorObserver(object):
     def get_highest_level(self, data):
         highest_level = 'good'
         for d in data.values():
+            if not 'level' in d:
+                continue
             if d['level'] in self.warning_levels and self.warning_levels.index(d['level']) > self.warning_levels.index(highest_level):
                 highest_level = d['level']
         return highest_level

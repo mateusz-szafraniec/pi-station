@@ -10,6 +10,7 @@ SENSOR_LABELS = {
         'hcho': "HCHO",
         'temp': "Temperature",
         'humi': "Humidity",
+        'pres': "Pressure",
         'so2': "SO2",
         'no2': "NO2",
         'o3': "O3",
@@ -22,9 +23,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def dashboard():
-    return render_template('dashboard.html', data=sensor_data.latest, labels=SENSOR_LABELS)
+    return render_template("dashboard.html", data=sensor_data.latest, labels=SENSOR_LABELS)
 
 def start(data):
     global sensor_data
     sensor_data = data
-    app.run(host='0.0.0.0')
+    app.run(host="0.0.0.0")

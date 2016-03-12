@@ -23,7 +23,7 @@ class PlantowerPmReader(SensorReader):
     def read(self):
         self.raw_data = self.port.read(self.data_length)
         try:
-            head_index = self.raw_data.index('\x42\x4d')
+            head_index = self.raw_data.index("\x42\x4d")
         except:
             # No valid data
             return

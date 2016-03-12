@@ -4,13 +4,16 @@ import atexit
 import grove_rgb_lcd
 from collections import OrderedDict
 import math
+import smbus
+import RPi.GPIO as GPIO
+from grove_i2c_barometic_sensor_BMP180 import BMP085
 
 
 class GroveSensorReader(SensorReader):
 
     def __init__(self, key, pin=None):
         super(GroveSensorReader, self).__init__(key, pin)
-        grovepi.pinMode(pin, "INPUT")
+        grovepi.pinMode(pin, 'INPUT')
 
 
 class GroveDigitalReader(GroveSensorReader):
@@ -84,6 +87,24 @@ class GroveDhtReader(SensorReader):
         return result
 
 
+class GroveBarometerReader(SensorReader):
+
+    def __init__(self, key, address=0x77, mode=1):
+        super(GroveBarometerReader, self).__init__(key)
+        self.bmp = BMP085(address, mode)
+        rev = GPIO.RPI_REVISION
+        if rev == 2 or rev == 3:
+            self.bus = smbus.SMBus(1)
+        else:
+            self.bus = smbus.SMBus(0)
+
+    def read(self):
+        pressure = self.bmp.readPressure() / 100.0
+        return {
+            'value': pressure,
+        }
+
+
 class GroveLcdObserver(MemorySensorObserver):
     
     index = 0
@@ -97,7 +118,7 @@ class GroveLcdObserver(MemorySensorObserver):
             txt += ['{k}:{v}'.format(k=key.upper(),v=int(val['value']))]
         if len(txt) > 1:
             txt = sorted(txt, key=lambda x: len(x))
-            grove_rgb_lcd.setText(txt[-1] + ' ' + txt[0] + '\n' + ' '.join(txt[1:-1]))
+            grove_rgb_lcd.setText(txt[-1] + " " + txt[0] + "\n" + " ".join(txt[1:-1]))
         else:
             grove_rgb_lcd.setText(txt[0])
         rgb = self.get_level_color(self.get_highest_level(self.latest))
@@ -108,7 +129,7 @@ class GroveChainableRgbLedObserver(MemorySensorObserver):
     
     def __init__(self, pin):
         self.pin = pin
-        grovepi.pinMode(self.pin,"OUTPUT")
+        grovepi.pinMode(self.pin,'OUTPUT')
         grovepi.chainableRgbLed_init(self.pin, 1)
         grovepi.storeColor(0, 255, 0)
         
