@@ -83,7 +83,7 @@ Add following line to start sensor daemon each time when system starts.
 
 
 If your Raspberry Pi is usually connected to a screen,  
-you can consider making it a kiosk by installing [iceweasel](https://wiki.debian.org/Iceweasel) with [RKiosk](https://addons.mozilla.org/firefox/addon/r-kiosk/) add-on.
+you can consider making it a kiosk by installing [iceweasel](https://wiki.debian.org/Iceweasel) with [R-kiosk](https://addons.mozilla.org/firefox/addon/r-kiosk/) add-on.
 
 Setting ```http://localhost:5000``` as the browser homepage,  
 add ```@iceweasel``` in ```/home/pi/.config/lxsession/LXDE/autostart``` to make it auto start on desktop login.
