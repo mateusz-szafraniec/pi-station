@@ -96,12 +96,6 @@ Currently supported output method:
 
 Connect your module, uncomment and edit corresponding code in ```senser_daemon.py``` to use them.
 
-#### Setup GPS
-
-```
-sudo apt-get install gpsd gpsd-clients python-gps
-```
-
 ### Next Steps
 
 * Post data to SensorWeb server
