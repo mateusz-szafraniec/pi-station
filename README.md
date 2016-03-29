@@ -78,7 +78,7 @@ sudo crontab -e
 
 Add following line to start sensor daemon each time when system starts.
 ```
-@reboot /usr/bin/python /home/pi/Source/pi-station/sensor_daemon.py &
+@reboot /usr/bin/python /home/pi/pi-station/sensor_daemon.py &
 ```
 
 
