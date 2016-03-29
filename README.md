@@ -70,6 +70,26 @@ http://localhost:5000
 
 If your Raspberry Pi have an IP, you can access it on other devices via IP.  
 
+#### 5. Make It Run at Startup
+You can leverage crontab to run the script at startup.
+```
+sudo crontab -e
+```
+
+Add following line to start sensor daemon each time when system starts.
+```
+@reboot /usr/bin/python /home/pi/Source/pi-station/sensor_daemon.py &
+```
+
+
+If your Raspberry Pi is usually connected to a screen,  
+you can consider making it a kiosk by installing [iceweasel](https://wiki.debian.org/Iceweasel) with [RKiosk](https://addons.mozilla.org/firefox/addon/r-kiosk/) add-on.
+
+Setting ```http://localhost:5000``` as the browser homepage,  
+add ```@iceweasel``` in ```/home/pi/.config/lxsession/LXDE/autostart``` to make it auto start on desktop login.
+
+This way you'll have a air quality kiosk in your place.
+
 ### More Options
 
 You may need to [install GrovePi](http://www.dexterindustries.com/GrovePi/get-started-with-the-grovepi/setting-software/) in order to use Grove Modules.
