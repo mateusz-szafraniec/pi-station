@@ -2,6 +2,7 @@ from sensorweb.rpi import *
 from sensorweb.rpi.gpio import *
 #from sensorweb.rpi.grove import *
 import sensor_dashboard
+import config
 
 
 loop = SensorLooper()
@@ -31,6 +32,7 @@ loop.addReader(PlantowerPmReader("pm"))
 #######################
 loop.addObserver(ConsoleSensorObserver())
 mem_sensors = MemorySensorObserver()
+#mem_sensors = SensorWebObserver(config)
 #mem_sensors = GroveLcdObserver()
 #loop.addObserver(GroveChainableRgbLedObserver(7))
 loop.addObserver(mem_sensors)

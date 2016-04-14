@@ -1,3 +1,4 @@
+import requests
 import datetime
 import time
 import threading
@@ -147,3 +148,11 @@ class MemorySensorObserver(SensorObserver):
             v['time'] = now
         self.latest.update(data)
 
+class SensorWebObserver(MemorySensorObserver):
+
+    def __init__(self, config):
+        self.config = config
+
+    def notify(self, data):
+        super(SensorWebObserver, self).notify(data)
+	requests.post('http://api.sensorweb.io/sensors/' + self.config.SENSOR_ID + '/data', data = {'pm2_5': self.latest['pm2_5'], 'api_key': self.config.API_KEY})
