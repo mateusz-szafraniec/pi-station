@@ -1,19 +1,20 @@
 Raspberry Pi Sensor Station
 ==============
 Sensor Station software for Raspberry Pi.
+
 Since our first initiative is to build a PM2.5 sensor network, we will demostrate below how to setup the station with PM sensor connected.
 
 ## Hardware Requirements:
 
 * Raspberry Pi (currently only tested with Pi 2)
 * At least 4G SD Card
-* Plantower PM Sensor (currently only tested with PMS3003) with Cable
+* Plantower PM Sensor (currently only tested with [PMS3003][PMS3003]) with Cable
 
 ## Setup Steps
 
 ### Step 1. Prepare OS
 
-[Install Raspbian on your SDCard.](https://www.raspberrypi.org/documentation/installation/installing-images/)
+[Install Raspbian on your SDCard.][install-raspbian]
 
 Insert the SDCard to your Raspberry Pi when done.
 
@@ -33,7 +34,7 @@ TXD (PIN5) | RXD (PIN10)
 
 Power on your Raspberry Pi and get access to it. 
 
-It would be easier if you have screen/mouse/keyboard to access GUI. But if you prefer command line access, you can use a [USB to TTL cable](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable) or [SSH](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-6-using-ssh) when you got it's IP address. Note that USB to TTL cable uses serial pins, so you might need to unplug serial sensors first.
+It would be easier if you have screen/mouse/keyboard to access GUI. But if you prefer command line access, you can use a [USB to TTL cable][rpi-usbttl] or [SSH][rpi-ssh] when you got it's IP address. Note that USB to TTL cable uses serial pins, so you might need to unplug serial sensors first.
 
 In order to read data from serial PM sensor, you'll have to disable serial console access first.  
 ```
@@ -92,7 +93,7 @@ Add following line to start sensor daemon each time when system starts.
 
 
 If your Raspberry Pi is usually connected to a screen,  
-you can consider making it a kiosk by installing [iceweasel](https://wiki.debian.org/Iceweasel) with [R-kiosk](https://addons.mozilla.org/firefox/addon/r-kiosk/) add-on.
+you can consider making it a kiosk by installing [iceweasel][iceweasel] with [R-kiosk][rkiosk] add-on.
 
 Setting ```http://localhost:5000``` as the browser homepage,  
 add ```@iceweasel``` in ```/home/pi/.config/lxsession/LXDE/autostart``` to make it auto start on desktop login.
@@ -101,7 +102,7 @@ This way you'll have a air quality kiosk in your place.
 
 ## More Supported Modules
 
-You may need to [install GrovePi](http://www.dexterindustries.com/GrovePi/get-started-with-the-grovepi/setting-software/) in order to use Grove Modules.
+You may need to [install GrovePi][grovepi] in order to use Grove Modules.
 
 ### Connect More Sensors
 
@@ -135,3 +136,10 @@ Connect your module, uncomment and edit corresponding code in ```senser_daemon.p
 ## Maintainers
 * [Eddie Lin](https://github.com/yshlin)
 
+[PMS3003]: https://goo.gl/CIVGjF
+[install-raspbian]: https://www.raspberrypi.org/documentation/installation/installing-images/
+[rpi-usbttl]: https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable
+[rpi-ssh]: https://learn.adafruit.com/adafruits-raspberry-pi-lesson-6-using-ssh
+[iceweasel]: https://wiki.debian.org/Iceweasel
+[rkiosk]: https://addons.mozilla.org/firefox/addon/r-kiosk/
+[grovepi]: http://www.dexterindustries.com/GrovePi/get-started-with-the-grovepi/setting-software/
