@@ -6,9 +6,15 @@ Since our first initiative is to build a PM2.5 sensor network, we will demostrat
 
 ## Hardware Requirements:
 
-* Raspberry Pi (currently only tested with Pi 2)
-* At least 4G SD Card
-* Plantower PM Sensor (currently only tested with [PMS3003][PMS3003]) with Cable
+- Raspberry Pi (currently only tested with Pi 2)
+- At least 4G SD Card
+- Wifi dongle
+- Accessories (screen/keyboard/mouse or USB2TTL cable)
+- Plantower PM Sensor
+  - Currently only tested with [PMS3003][PMS3003]
+  - 5V input, communicate via UART
+  - Great accuracy according to [comparative measurment on AQICN][aqicn-measurment]
+  - $17 USD
 
 ## Setup Steps
 
@@ -41,6 +47,8 @@ In order to read data from serial PM sensor, you'll have to disable serial conso
 sudo raspi-config
 ```
 Select 'Advanced Options' -> 'Serial' -> 'No'
+
+To get your Raspberry Pi online, you can use [wired network][pi-wired], or setup wifi via GUI or [command line][pi-wifi-cli]
 
 ### Step 4. Setup and Run
 
@@ -143,3 +151,6 @@ Connect your module, uncomment and edit corresponding code in ```senser_daemon.p
 [iceweasel]: https://wiki.debian.org/Iceweasel
 [rkiosk]: https://addons.mozilla.org/firefox/addon/r-kiosk/
 [grovepi]: http://www.dexterindustries.com/GrovePi/get-started-with-the-grovepi/setting-software/
+[aqicn-measurment]: http://aqicn.org/sensor/
+[pi-wired]: https://learn.adafruit.com/adafruits-raspberry-pi-lesson-3-network-setup/using-a-wired-network
+[pi-wifi-cli]: https://learn.adafruit.com/adafruits-raspberry-pi-lesson-3-network-setup/setting-up-wifi-with-occidentalis
