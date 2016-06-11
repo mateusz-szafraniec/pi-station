@@ -157,4 +157,4 @@ class SensorWebObserver(MemorySensorObserver):
         super(SensorWebObserver, self).notify(data)
         requests.post('http://' + self.config.SERVER_HOST + ':' + self.config.SERVER_PORT + 
                       '/sensors/' + self.config.SENSOR_ID + '/data', 
-                      data = {'pm2_5': self.latest['pm2.5'], 'api_key': self.config.API_KEY})
+                      data = {'pm25': self.latest['pm2.5']['value'], 'apiKey': self.config.API_KEY})
