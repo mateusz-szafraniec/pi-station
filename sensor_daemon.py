@@ -1,6 +1,6 @@
 from sensorweb.rpi import *
 from sensorweb.rpi.gpio import *
-#from sensorweb.rpi.grove import *
+from sensorweb.rpi.grove import *
 import sensor_dashboard
 import config
 
@@ -11,7 +11,7 @@ loop = SensorLooper()
 # Sensor Readers      #
 # uncomment to enable #
 #######################
-loop.addReader(PlantowerPmReader("pm"))
+loop.addReader(PlantowerPmReader("pm"), 60)
 # for PMS1003/PMS5003 you'll have to specify
 # 32 as custom data length (default is 24)
 #loop.addReader(PlantowerPmReader("pm", 32))
@@ -31,11 +31,12 @@ loop.addReader(PlantowerPmReader("pm"))
 # uncomment to enable #
 #######################
 loop.addObserver(ConsoleSensorObserver())
-mem_sensors = MemorySensorObserver()
-#mem_sensors = SensorWebObserver(config)
-#mem_sensors = GroveLcdObserver()
+#mem_sensors = MemorySensorObserver()
+web_sensors = SensorWebObserver(config)
+mem_sensors = GroveLcdObserver()
 #loop.addObserver(GroveChainableRgbLedObserver(7))
 loop.addObserver(mem_sensors)
+loop.addObserver(web_sensors)
 
 
 ##########################################

@@ -1,3 +1,4 @@
 API_KEY = ''
 SENSOR_ID = ''
-
+SERVER_HOST = 'api.sensorweb.io'
+SERVER_PORT = '80'
